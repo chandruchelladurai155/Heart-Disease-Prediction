@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Heart Disease Prediction</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  </head>
+  <body>
+    <header class="hero">
+      <div class="hero__content">
+        <h1>Heart Disease Prediction</h1>
+        <p>
+          Use the UCI heart disease dataset to explore key features and predict
+          risk with a responsive frontend and Flask backend.
+        </p>
+      </div>
+      <div class="hero__metrics">
+        <div class="card">
+          <strong>Model accuracy</strong>
+          <span>{{ metrics['accuracy'] | round(4) }}</span>
+        </div>
+        <div class="card">
+          <strong>Dataset rows</strong>
+          <span>{{ dataset_count }}</span>
+        </div>
+      </div>
+    </header>
+
+    <main class="container">
+      <section class="section section--form">
+        <div class="panel">
+          <h2>Predict Risk</h2>
+          <p class="panel__subtitle">
+            Enter patient values and see whether the model predicts heart
+            disease risk.
+          </p>
+          <form method="post" class="prediction-form">
+            <div class="grid grid-2">
+              <label>
+                Age
+                <input type="number" name="age" value="{{ form_values.age }}" min="1" max="120" required />
+              </label>
+              <label>
+                Sex
+                <select name="sex">
+                  <option value="1" {% if form_values.sex == '1' %}selected{% endif %}>Male</option>
+                  <option value="0" {% if form_values.sex == '0' %}selected{% endif %}>Female</option>
+                </select>
+              </label>
+              <label>
+                Chest pain type
+                <select name="cp">
+                  <option value="0" {% if form_values.cp == '0' %}selected{% endif %}>Typical angina</option>
+                  <option value="1" {% if form_values.cp == '1' %}selected{% endif %}>Atypical angina</option>
+                  <option value="2" {% if form_values.cp == '2' %}selected{% endif %}>Non-anginal</option>
+                  <option value="3" {% if form_values.cp == '3' %}selected{% endif %}>Asymptomatic</option>
+                </select>
+              </label>
+              <label>
+                Resting BP
+                <input type="number" name="trestbps" value="{{ form_values.trestbps }}" min="80" max="200" required />
+              </label>
+              <label>
+                Cholesterol
+                <input type="number" name="chol" value="{{ form_values.chol }}" min="100" max="400" required />
+              </label>
+              <label>
+                Fasting blood sugar
+                <select name="fbs">
+                  <option value="0" {% if form_values.fbs == '0' %}selected{% endif %}>≤ 120 mg/dL</option>
+                  <option value="1" {% if form_values.fbs == '1' %}selected{% endif %}>> 120 mg/dL</option>
+                </select>
+              </label>
+              <label>
+                Resting ECG
+                <select name="restecg">
+                  <option value="0" {% if form_values.restecg == '0' %}selected{% endif %}>Normal</option>
+                  <option value="1" {% if form_values.restecg == '1' %}selected{% endif %}>ST-T wave abnormality</option>
+                  <option value="2" {% if form_values.restecg == '2' %}selected{% endif %}>Left ventricular hypertrophy</option>
+                </select>
+              </label>
+              <label>
+                Max heart rate
+                <input type="number" name="thalach" value="{{ form_values.thalach }}" min="60" max="220" required />
+              </label>
+              <label>
+                Exercise angina
+                <select name="exang">
+                  <option value="0" {% if form_values.exang == '0' %}selected{% endif %}>No</option>
+                  <option value="1" {% if form_values.exang == '1' %}selected{% endif %}>Yes</option>
+                </select>
+              </label>
+              <label>
+                ST depression
+                <input type="number" name="oldpeak" value="{{ form_values.oldpeak }}" step="0.1" min="0" max="10" required />
+              </label>
+              <label>
+                Slope of ST
+                <select name="slope">
+                  <option value="0" {% if form_values.slope == '0' %}selected{% endif %}>Upsloping</option>
+                  <option value="1" {% if form_values.slope == '1' %}selected{% endif %}>Flat</option>
+                  <option value="2" {% if form_values.slope == '2' %}selected{% endif %}>Downsloping</option>
+                </select>
+              </label>
+              <label>
+                Major vessels
+                <input type="number" name="ca" value="{{ form_values.ca }}" min="0" max="3" required />
+              </label>
+              <label>
+                Thalassemia
+                <select name="thal">
+                  <option value="3" {% if form_values.thal == '3' %}selected{% endif %}>Normal</option>
+                  <option value="6" {% if form_values.thal == '6' %}selected{% endif %}>Fixed defect</option>
+                  <option value="7" {% if form_values.thal == '7' %}selected{% endif %}>Reversible defect</option>
+                </select>
+              </label>
+            </div>
+            <button type="submit" class="btn btn--primary">Predict Risk</button>
+          </form>
+          {% if prediction_result is not none %}
+          <div class="result-card">
+            <h3>Prediction result</h3>
+            <p class="result-message {% if prediction_result == 1 %}result--high{% else %}result--low{% endif %}">
+              {{ 'Heart disease risk detected' if prediction_result == 1 else 'Low risk of heart disease' }}
+            </p>
+            <p>Confidence: {{ prediction_probability * 100 }}%</p>
+          </div>
+          {% endif %}
+        </div>
+      </section>
+
+      <section class="section section--data">
+        <div class="panel">
+          <h2>Dataset sample</h2>
+          <p class="panel__subtitle">
+            This table shows the first 10 rows of the heart disease dataset powering the prediction model.
+          </p>
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  {% for col in columns %}
+                  <th>{{ col }}</th>
+                  {% endfor %}
+                </tr>
+              </thead>
+              <tbody>
+                {% for row in dataset_preview %}
+                <tr>
+                  {% for col in columns %}
+                  <td>{{ row[col] }}</td>
+                  {% endfor %}
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
