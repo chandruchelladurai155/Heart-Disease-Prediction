@@ -1,6 +1,11 @@
 import os
 from pathlib import Path
+import sys
 from typing import Any
+
+ROOT_DIR = Path(__file__).resolve().parent.parent
+if str(ROOT_DIR) not in sys.path:
+    sys.path.insert(0, str(ROOT_DIR))
 
 import joblib
 import numpy as np
@@ -14,7 +19,7 @@ from sklearn.preprocessing import StandardScaler
 from src.data_loader import load_heart_disease_data
 
 
-MODEL_OUTPUT = Path("models/heart_model.pkl")
+MODEL_OUTPUT = Path(__file__).resolve().parent.parent / "models" / "heart_model.pkl"
 
 
 def build_pipeline() -> Pipeline:

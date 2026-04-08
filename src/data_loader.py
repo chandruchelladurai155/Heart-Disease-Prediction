@@ -3,6 +3,9 @@ from pathlib import Path
 import pandas as pd
 import requests
 
+ROOT_DIR = Path(__file__).resolve().parent.parent
+DEFAULT_DATA_PATH = ROOT_DIR / "data" / "heart.csv"
+
 UCI_URL = (
     "https://archive.ics.uci.edu/ml/machine-learning-databases/heart-disease/processed.cleveland.data"
 )
@@ -34,7 +37,10 @@ def download_uci_dataset(destination: str) -> str:
     return destination
 
 
-def load_heart_disease_data(csv_path: str = "data/heart.csv", download_if_missing: bool = True) -> pd.DataFrame:
+def load_heart_disease_data(csv_path: str = None, download_if_missing: bool = True) -> pd.DataFrame:
+    if csv_path is None:
+        csv_path = str(DEFAULT_DATA_PATH)
+    csv_path = str(csv_path)
     if not Path(csv_path).exists():
         if not download_if_missing:
             raise FileNotFoundError(f"Dataset not found at {csv_path}")

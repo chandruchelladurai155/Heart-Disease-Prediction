@@ -1,79 +1,86 @@
 # Heart Disease Prediction
 
-A complete data science project that predicts heart disease risk from the UCI Cleveland Heart Disease dataset.
+A local-ready data science project that predicts heart disease risk using the UCI Cleveland Heart Disease dataset.
 
 ## What is included
 
-- `src/app.py` — Flask web application with a polished frontend for risk prediction.
-- `src/data_loader.py` — downloads, loads, and cleans the UCI heart disease dataset.
-- `src/model_training.py` — trains a Random Forest classifier, evaluates it, and saves a model.
-- `src/templates/index.html` — responsive user interface for predictions and dataset preview.
-- `src/static/css/style.css` — high-contrast UI styling with accessible colors.
+- `run.py` — local app launcher for the Flask frontend.
+- `train.py` — local training launcher to build and save the model.
+- `src/app.py` — Flask backend and frontend integration.
+- `src/data_loader.py` — dataset downloader, loader, and cleaner.
+- `src/model_training.py` — model training, evaluation, and model persistence.
+- `src/templates/index.html` — responsive user interface for entering patient data.
+- `src/static/css/style.css` — modern theme with high-contrast styling.
 - `notebooks/heart_disease_prediction.ipynb` — interactive analysis notebook.
-- `data/heart.csv` — local data cache downloaded from UCI.
-- `models/heart_model.pkl` — saved model artifact after training.
-- `requirements.txt` — dependencies for backend, model training, and analysis.
+- `requirements.txt` — Python dependency list.
 
 ## Project features
 
-- Dataset loading and cleaning from the UCI repository
-- Binary heart disease prediction (`0` = no disease, `1` = disease)
-- Model training with a Random Forest classifier
-- Evaluation metrics: accuracy, classification report, confusion matrix
-- Frontend form to enter patient values and receive predictions
-- Dataset preview table in the web UI
-- Modern dark theme with contrast-first styling
+- Automatic dataset download from the UCI repository if the local file is missing.
+- Binary heart disease risk prediction (`0` = no disease, `1` = disease).
+- Random Forest model training and evaluation.
+- Flask frontend with a prediction form, dataset preview, and score display.
+- Accessible, contrast-focused UI with dropdown and numeric inputs.
+- Local-ready startup scripts for simplified execution.
 
-## Setup and usage
+## Setup on a local PC
 
-1. Create and activate a Python virtual environment:
+1. Clone the repository.
 
 ```bash
-cd /workspaces/Heart-Disease-Prediction
+git clone https://github.com/chandruchelladurai155/Heart-Disease-Prediction.git
+cd Heart-Disease-Prediction
+```
+
+2. Create and activate a Python virtual environment.
+
+```bash
 python3 -m venv .venv
 source .venv/bin/activate
 ```
 
-2. Install dependencies:
+3. Install dependencies.
 
 ```bash
 pip install -r requirements.txt
 ```
 
-3. Train the model and generate the saved artifact:
+4. Train the model locally (this downloads the dataset and saves the model under `models/`).
 
 ```bash
-python src/model_training.py
+python train.py
 ```
 
-4. Start the Flask web app:
+5. Start the web app locally.
 
 ```bash
-python src/app.py
+python run.py
 ```
 
-5. Open the app in your browser:
+6. Open your browser and visit:
 
 ```bash
 http://localhost:5000
 ```
 
-6. Optionally run the notebook for deeper analysis:
+## Alternate local commands
 
-```bash
-jupyter notebook notebooks/heart_disease_prediction.ipynb
-```
+If you prefer, these direct commands also work:
 
-## Backend and frontend workflow
+- Train directly: `python src/model_training.py`
+- Run the app directly: `python src/app.py`
+- Open analysis notebook: `jupyter notebook notebooks/heart_disease_prediction.ipynb`
 
-- The backend loads the dataset and retrains the model at startup.
-- The frontend accepts feature input from users and submits the form to Flask.
-- Flask predicts the target and returns a result message and confidence score.
-- The page also displays a preview of the dataset and the model accuracy.
+## Local workflow
+
+- `train.py` downloads the dataset and trains the model if needed.
+- `run.py` launches the Flask app with correct local paths.
+- The frontend sends feature data to Flask, which predicts heart disease risk.
+- The app displays prediction results and dataset preview.
 
 ## Data schema
 
-The model uses the following features:
+The model uses these features:
 
 - `age` — patient age in years
 - `sex` — 1 = male, 0 = female
@@ -91,13 +98,12 @@ The model uses the following features:
 
 ## Notes
 
-- The current model is a baseline proof-of-concept and can be improved with feature engineering or hyperparameter tuning.
-- The app uses a locally cached dataset stored in `data/heart.csv`.
-- Retraining is fast for this dataset and happens on app startup.
+- The app is configured for local execution and should work from the project root.
+- The dataset is downloaded automatically if missing.
+- The model is saved to `models/heart_model.pkl` after training.
 
-## Next improvements
+## Recommended next steps
 
-- Add API endpoints for external predictions
-- Implement persistent model storage and incremental retraining
-- Add visualization charts inside the frontend
-- Add form validation and better UX messages
+- Improve model accuracy with feature engineering or hyperparameter tuning.
+- Add charts or data visualizations to the frontend.
+- Add an API endpoint for external prediction integration.

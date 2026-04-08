@@ -1,8 +1,14 @@
 from pathlib import Path
+import sys
+
+ROOT_DIR = Path(__file__).resolve().parent.parent
+if str(ROOT_DIR) not in sys.path:
+    sys.path.insert(0, str(ROOT_DIR))
 
 import joblib
 import pandas as pd
 from flask import Flask, render_template, request
+from sklearn.model_selection import train_test_split
 
 from src.data_loader import load_heart_disease_data
 from src.model_training import build_pipeline, evaluate_model, save_model, train_model
@@ -20,9 +26,20 @@ app = Flask(
 
 def initialize_app():
     df = load_heart_disease_data(csv_path=str(DATA_PATH))
-    model, X_test, y_test = train_model(df)
-    save_model(model, MODEL_PATH)
-    metrics = evaluate_model(model, X_test, y_test)
+    if MODEL_PATH.exists():
+        model = joblib.load(MODEL_PATH)
+        _, X_test, _, y_test = train_test_split(
+            df.drop(columns=["target"]),
+            df["target"],
+            test_size=0.25,
+            random_state=42,
+            stratify=df["target"],
+        )
+        metrics = evaluate_model(model, X_test, y_test)
+    else:
+        model, X_test, y_test = train_model(df)
+        save_model(model, MODEL_PATH)
+        metrics = evaluate_model(model, X_test, y_test)
     return df, model, metrics
 
 
